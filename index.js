@@ -1,5 +1,5 @@
 var cluster = require('cluster'),
-	express = require('express')
+  express = require('express'),
   app = express(),
   numCPUs = require('os').cpus().length,
   MasterPort = process.env.PORT || 2121;
@@ -12,22 +12,17 @@ if (cluster.isMaster && numCPUs > 1) {
   	worker = cluster.fork({port: port});
   	pidToPort[worker.process.pid] = port;
   }
-
   app.get('/', function (req, res) {
     res.end('Welcome to Master page.');
 	});
-
   app.listen(MasterPort, () => {
   	console.log('MASTER listening to port %s...', MasterPort);
   });
-  
 } else {
 	app.set('view engine', 'ejs');
-
 	app.get('/', function (req, res) {
     res.render('home', {pid: process.pid, port: process.env.port});
 	});
-
   app.listen(process.env.port, () => {
   	console.log(process.pid + ' listening to port %s...', process.env.port);
   });
